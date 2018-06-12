@@ -1,0 +1,9 @@
+# General folders
+
+__pycache__
+bin/__pycache__
+db/__pycache__
+
+# Files
+
+bin/*.sav

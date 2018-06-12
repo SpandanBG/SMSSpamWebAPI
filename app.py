@@ -14,21 +14,18 @@ config = {}
 @app.route('/sms', methods=["POST"])
 def sms():
     data = request.get_json()
-    thread = Thread(target=dbm.msgPusher, args=(data["message"], ))
-    thread.start()
     model, vectorizer = m.loadUtils()
     features = m.extractFeatures(data, vectorizer)
-    label = model.predict(features)
-    return jsonify({"results": label.tolist()})
+    labels = model.predict(features)
+    thread = Thread(target=dbm.msgPusher, args=(data["message"], labels, ))
+    thread.start()
+    return jsonify({"results": labels.tolist()})
 
 @app.route('/classify/<id>/<cls>', methods=['GET'])
 def classify(id, cls):
-    try:
-        thread = Thread(target=dbm.classPusher, args=(id,cls,))
-        thread.start()
-    except:
-        return jsonify({"success": False})
-    return jsonify({"success": True})
+    return jsonify({
+        "success": dbm.classPusher(id, cls)
+    })
 
 @app.route('/messages', methods=['GET'])
 def messages():
@@ -36,10 +33,5 @@ def messages():
 
 if __name__ == "__main__":
     config = m.loadConfig()
-    dbm.table = config['db']['tables'][0]
-    dbm.rcon = dbm.r.connect(
-        db=config['db']['db'], 
-        user=config['db']['user'], 
-        password=config['db']['password']
-    )
+    dbm.dbConnect(config['db'])
     app.run(host=config['web']['host'], port=config['web']['port'])

@@ -5,6 +5,8 @@ import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
 from bin import modules as m
+from db import modules as dbm
+import rethinkdb as r
 
 def readData():
     data = pd.read_csv("spam.csv", encoding="latin-1")
@@ -12,6 +14,36 @@ def readData():
     data = data.rename(columns = {"v1":"label", "v2":"message"})
     data["length"] = data["message"].apply(len)
     return data
+
+def extractLabelWithVote(predicted, spam, ham):
+    total = spam + ham
+    label = None
+    if spam > ham and 'spam' != predicted:
+        percent = (spam*100)/total
+        if percent >= 80:
+            label = 'spam'
+    elif spam > ham and 'spam' == predicted:
+        label = 'spam'
+    elif ham > spam and 'ham' != predicted:
+        percent = (ham*100)/total
+        if percent >= 80:
+            label = 'ham'
+    elif ham > spam and 'ham' == predicted:
+        label = 'ham'
+    else:
+        label = predicted
+    return label
+
+def getDBDataSet():
+    dataSet = {"label": [], "message": []}
+    for doc in dbm.msgListGet():
+        if doc['ham'] > 0 or doc['spam'] > 0:
+            lable = extractLabelWithVote(doc['predicted'], doc['spam'], doc['ham'])
+            dataSet['label'].append(lable) 
+            dataSet['message'].append(doc['message'])
+    dataSet = pd.DataFrame(dataSet)
+    dataSet['length'] = dataSet['message'].apply(len)
+    return dataSet
 
 def getVectorizerAndFeature(data):
     text_feat = data["message"].copy()
@@ -29,8 +61,10 @@ def createModel(features, label):
     return mnb
 
 if __name__ == "__main__":
-    print("Reading dataset")
-    dataSet = readData()
+    print("Loading dataset")
+    config = m.loadConfig()
+    dbm.dbConnect(config['db'])
+    dataSet = readData().append(getDBDataSet(), ignore_index=True)
     print("Extracting features")
     vectorizer, features = getVectorizerAndFeature(dataSet)
     print("Creating model")
