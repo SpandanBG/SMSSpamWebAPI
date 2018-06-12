@@ -37,7 +37,7 @@ def extractLabelWithVote(predicted, spam, ham):
 def getDBDataSet():
     dataSet = {"label": [], "message": []}
     for doc in dbm.msgListGet():
-        if doc['ham'] > 0 or doc['spam'] > 0:
+        if doc['ham'] + doc['spam'] >= 50:
             lable = extractLabelWithVote(doc['predicted'], doc['spam'], doc['ham'])
             dataSet['label'].append(lable) 
             dataSet['message'].append(doc['message'])

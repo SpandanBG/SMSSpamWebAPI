@@ -14,12 +14,14 @@ def dbConnect(config):
 
 def msgPusher(msgs, labels):
     for i in range(len(msgs)):
-        r.table(table).insert({
-            "message": msgs[i],
-            "predicted": labels[i],
-            "ham": 0,
-            "spam": 0
-        }).run(rcon)
+        hasMsg = r.table(table).filter(r.row['message']==msgs[i]).count().run(rcon)
+        if hasMsg == 0:
+            r.table(table).insert({
+                "message": msgs[i],
+                "predicted": labels[i],
+                "ham": 0,
+                "spam": 0
+            }).run(rcon)
     return
 
 def msgListGet():
