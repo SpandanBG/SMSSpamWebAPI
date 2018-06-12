@@ -3,14 +3,21 @@ import pandas as pd
 import pickle, string
 from nltk.stem import SnowballStemmer
 from nltk.corpus import stopwords
+import json
+
+def loadConfig():
+    config = None
+    with open("config.json", "r") as f:
+        config = json.load(f)
+    return config
 
 def saveUtils(model, vectorizer):
-    pickle.dump(model, open("model.sav", "wb"))
-    pickle.dump(vectorizer, open("vectorizer.sav", "wb"))
+    pickle.dump(model, open("bin/model.sav", "wb"))
+    pickle.dump(vectorizer, open("bin/vectorizer.sav", "wb"))
 
 def loadUtils():
-    model = pickle.load(open("bin\\model.sav", "rb"))
-    vectorizer = pickle.load(open("bin\\vectorizer.sav", "rb"))
+    model = pickle.load(open("bin/model.sav", "rb"))
+    vectorizer = pickle.load(open("bin/vectorizer.sav", "rb"))
     return model, vectorizer
 
 def text_process(text):

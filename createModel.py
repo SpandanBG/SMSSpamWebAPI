@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.naive_bayes import MultinomialNB
-import modules as m
+from bin import modules as m
 
 def readData():
     data = pd.read_csv("spam.csv", encoding="latin-1")

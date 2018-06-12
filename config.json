@@ -1,0 +1,12 @@
+{
+    "web": {
+        "host": "localhost",
+        "port": 80
+    },
+    "db": {
+        "db": "sms_spam_db",
+        "user": "root",
+        "password": "toor",
+        "tables": ["sms"]
+    }
+}
