@@ -51,9 +51,9 @@ def getVectorizerAndFeature(data):
     text_feat = text_feat.apply(m.stemmer)
     vectorizer = TfidfVectorizer("english")
     features = vectorizer.fit_transform(text_feat)
-    lf = data["length"].values
-    newfeat = np.hstack((features.todense(), lf[:, None]))
-    return vectorizer, newfeat
+    len_feat = data["length"].values
+    features = np.hstack((features.todense(), len_feat[:, None]))
+    return vectorizer, features
 
 def createModel(features, label):
     mnb = MultinomialNB(alpha=0.2)
