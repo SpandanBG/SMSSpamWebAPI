@@ -14,6 +14,8 @@ def dbConnect(config):
 
 def msgPusher(msgs, labels):
     for i in range(len(msgs)):
+        if msgs[i].strip() == "":
+            continue
         hasMsg = r.table(table).filter(r.row['message']==msgs[i]).count().run(rcon)
         if hasMsg == 0:
             r.table(table).insert({
@@ -25,15 +27,15 @@ def msgPusher(msgs, labels):
     return
 
 def msgListGet():
-    res = list(r.table(table).run(rcon))
+    res = list(r.table(table).order_by(r.row['spam'] + r.row['ham']).limit(30).run(rcon))
     return res
 
-def classPusher(id, cls):
+def classPusher(id, label):
     try:
         hasID = r.table(table).filter(r.row['id']==id).count().run(rcon)
         if hasID > 0:
             r.table(table).get(str(id)).update({
-                cls: r.row[cls] + 1
+                label: r.row[label] + 1
             }).run(rcon)
     except:
         return False
