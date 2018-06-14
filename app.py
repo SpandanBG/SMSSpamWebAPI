@@ -21,10 +21,10 @@ def sms():
     thread.start()
     return jsonify({"results": labels.tolist()})
 
-@app.route('/classify/<id>/<cls>', methods=['GET'])
-def classify(id, cls):
+@app.route('/classify/<id>/<label>', methods=['GET'])
+def classify(id, label):
     return jsonify({
-        "success": dbm.classPusher(id, cls)
+        "success": dbm.classPusher(id, label)
     })
 
 @app.route('/messages', methods=['GET'])
