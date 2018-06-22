@@ -54,7 +54,7 @@ The project contains a _config.json_ file that can be edited to change the follo
 1. Execute _app.py_ to start the server.
 
 ### How it works:
-Comming soon on [SudoCoding](http://sudocoding.xyz).
+Available at [SudoCoding](http://sudocoding.xyz/sms-spam-detection-using-machine-learning/).
 
 ### References and datasets:
 Dataset Link: https://www.kaggle.com/uciml/sms-spam-collection-dataset<br/>
